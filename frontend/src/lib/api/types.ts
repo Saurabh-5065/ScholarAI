@@ -38,3 +38,21 @@ export type LoginRequest = {
   email: string;
   password: string;
 };
+
+export type ProjectResponse = {
+  id: string;
+  title: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateProjectRequest = {
+  title: string;
+  description?: string | null;
+};
+
+export type UpdateProjectRequest = {
+  title: string;
+  description?: string | null;
+};
