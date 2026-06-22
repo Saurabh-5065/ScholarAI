@@ -298,25 +298,6 @@ Core tables (see `backend-spring/src/main/resources/db/migration/V1__init.sql`):
 - Auth cookies are HTTP-only; CSRF protection is enabled via a CSRF cookie filter.
 - CORS is restricted to the configured frontend origin.
 - File uploads are restricted by extension and content type (PDF, DOCX, TXT, MD) and stored with sanitized, namespaced paths.
-- **Never commit secrets.** `.env` files are gitignored; only `.env.example` is tracked.
-
 ---
 
-## ☁️ Deployment
 
-For a step-by-step guide to deploying ScholarAI on the **AWS Free Tier** (for testing/showcase), see **[DEPLOY_AWS.md](DEPLOY_AWS.md)**.
-
----
-
-## 🤝 Contributing
-
-This is a personal/showcase project. Issues and suggestions are welcome. When contributing:
-- Keep the frontend → Spring → AI service boundary intact (the browser must never call the AI service directly).
-- Add a Flyway migration for any schema change.
-- Don't commit secrets or `.env` files.
-
----
-
-## 📄 License
-
-No license file is currently included. Add one (e.g. MIT) before sharing or reuse.
