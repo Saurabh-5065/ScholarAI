@@ -37,7 +37,7 @@ class Usage(BaseModel):
     inputTokens: int
     outputTokens: int
     
-    
+
 class InternalRagQueryRequest(BaseModel):
     userId: UUID
     projectId: UUID
@@ -50,4 +50,18 @@ class InternalRagQueryRequest(BaseModel):
 class InternalRagQueryResponse(BaseModel):
     answer: str
     citations: list[Citation]
+    usage: Usage
+
+
+class InternalWritingRequest(BaseModel):
+    userId: UUID
+    projectId: UUID | None
+    inputText: str
+    tone: Literal["ACADEMIC", "SIMPLE", "FORMAL", "CONCISE"]
+    targetLength: Literal["SHORT", "MEDIUM", "LONG"]
+
+
+class InternalWritingResponse(BaseModel):
+    outputText: str
+    warnings: list[str]
     usage: Usage
