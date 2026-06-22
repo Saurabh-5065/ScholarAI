@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import health, ingest
+from app.routers import health, ingest, rag
 from app.db import close_pool
 from app.errors import register_error_handlers
 
@@ -9,6 +9,7 @@ register_error_handlers(app)
 
 app.include_router(health.router)
 app.include_router(ingest.router)
+app.include_router(rag.router)
 
 @app.on_event("shutdown")
 def shutdown() -> None:
