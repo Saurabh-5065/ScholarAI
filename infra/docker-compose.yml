@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: scholarai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: scholarai
+      POSTGRES_USER: scholarai
+      POSTGRES_PASSWORD: scholarai_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - scholarai_postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: scholarai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  scholarai_postgres_data:
