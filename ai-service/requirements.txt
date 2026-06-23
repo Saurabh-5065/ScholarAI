@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+openai
+psycopg[binary,pool]
+pgvector
+sqlalchemy
+redis
+httpx
+pypdf
+python-docx
+tiktoken
+tenacity
+structlog
+pytest
