@@ -27,18 +27,23 @@ public class SecurityConfig {
             CustomOAuth2UserService oauth2UserService,
             CsrfCookieFilter csrfCookieFilter,
             RestAuthenticationEntryPoint authenticationEntryPoint,
-            RestAccessDeniedHandler accessDeniedHandler
+            RestAccessDeniedHandler accessDeniedHandler,
+            HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository
     ) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                // Authentication is carried solely by the JWT cookie. Keeping the chain STATELESS
+                // means Spring never stores the SecurityContext in an HttpSession, so clearing the
+                // JWT cookies on logout fully ends the session — there is no JSESSIONID to fall back on.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh", "/api/auth/me", "/oauth2/**", "/login/oauth2/**", "/actuator/health").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth
+                        .authorizationEndpoint(endpoint -> endpoint.authorizationRequestRepository(authorizationRequestRepository))
                         .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
                         .successHandler(successHandler)
                         .failureHandler(failureHandler))

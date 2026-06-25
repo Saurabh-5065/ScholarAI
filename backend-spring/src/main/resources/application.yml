@@ -5,6 +5,14 @@ spring:
   application:
     name: backend-spring
 
+  # Load the repo-root .env (KEY=value lines) as a property source.
+  # The [.properties] hint tells Spring to parse the extension-less .env file
+  # in properties format. `optional:` means startup won't fail if it's absent
+  # (e.g. in CI/prod, where real OS env vars are injected instead).
+  # The ../ is because the app runs from backend-spring/ while .env lives at the repo root.
+  config:
+    import: optional:file:../.env[.properties]
+
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:scholarai}
     username: ${POSTGRES_USER}
@@ -24,16 +32,16 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
             scope:
               - openid
               - profile
@@ -42,9 +50,9 @@ spring:
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
   ai-service-url: ${AI_SERVICE_URL:http://localhost:8000}
-  ai-service-token: ${AI_SERVICE_TOKEN}
+  ai-service-token: ${AI_SERVICE_TOKEN:change-this-internal-service-token}
   jwt:
     secret: ${JWT_SECRET}
-    access-token-minutes: ${ACCESS_TOKEN_MINUTES}
-    refresh-token-days: ${REFRESH_TOKEN_DAYS}
+    access-token-minutes: ${ACCESS_TOKEN_MINUTES:15}
+    refresh-token-days: ${REFRESH_TOKEN_DAYS:7}
   upload-dir: ${UPLOAD_DIR:../storage/uploads}

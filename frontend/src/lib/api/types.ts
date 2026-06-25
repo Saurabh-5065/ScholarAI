@@ -56,3 +56,70 @@ export type UpdateProjectRequest = {
   title: string;
   description?: string | null;
 };
+
+export type DocumentResponse = {
+  id: string;
+  projectId: string;
+  originalFilename: string;
+  contentType: string | null;
+  fileSize: number | null;
+  pageCount: number | null;
+  status: DocumentStatus;
+  failureReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Citation = {
+  documentId: string;
+  documentName: string;
+  pageNumber: number | null;
+  chunkId: string;
+  quote: string;
+  score: number;
+};
+
+export type Usage = {
+  model: string;
+  inputTokens: number;
+  outputTokens: number;
+};
+
+export type CreateChatSessionRequest = {
+  title: string;
+};
+
+export type ChatSessionResponse = {
+  id: string;
+  projectId: string;
+  title: string;
+  createdAt: string;
+};
+
+export type ChatMessageResponse = {
+  id: string;
+  role: ChatRole;
+  content: string;
+  citations: Citation[];
+  createdAt: string;
+};
+
+export type ChatSessionDetailResponse = {
+  id: string;
+  projectId: string;
+  title: string;
+  createdAt: string;
+  messages: ChatMessageResponse[];
+};
+
+export type SendChatMessageRequest = {
+  message: string;
+  documentIds: string[];
+  topK: number;
+};
+
+export type SendChatMessageResponse = {
+  userMessage: ChatMessageResponse;
+  assistantMessage: ChatMessageResponse;
+  usage: Usage;
+};
