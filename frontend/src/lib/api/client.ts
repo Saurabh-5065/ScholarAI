@@ -71,6 +71,9 @@ export async function apiRequest<T>(
     headers,
     body: requestBody,
     credentials: "include",
+    // Never let the browser serve an authenticated response (e.g. /api/auth/me)
+    // from its HTTP cache. The session must always be validated against the server.
+    cache: "no-store",
   });
 
   if (response.status === 204) return undefined as T;

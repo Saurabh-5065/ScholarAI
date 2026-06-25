@@ -33,9 +33,12 @@ export function AppShell({
   const { data: user } = useCurrentUser();
   const logoutMutation = useMutation({
     mutationFn: logout,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["auth"] });
-      router.push("/login");
+    onSuccess: () => {
+      // Wipe every cached query (user, projects, documents, chats, ...) so no
+      // previous-session data lingers in memory, then hard-replace the history
+      // entry so "Back" cannot return to an authenticated page.
+      queryClient.clear();
+      router.replace("/login");
     },
     onError: () => toast.error("Logout failed"),
   });
