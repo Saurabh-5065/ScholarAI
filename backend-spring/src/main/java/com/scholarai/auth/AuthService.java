@@ -15,6 +15,8 @@ import com.scholarai.user.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +77,13 @@ public class AuthService {
             Arrays.stream(request.getCookies()).filter(c -> "refresh_token".equals(c.getName())).findFirst().map(Cookie::getValue).ifPresent(refreshTokens::revoke);
         }
         cookies.clearAuthCookies(response);
+        // Defense in depth: drop any HTTP session that may exist and clear the security context so
+        // no server-side authentication can outlive the cleared JWT cookies.
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
     }
 
     public void issueCookies(User user, HttpServletResponse response) {
