@@ -123,3 +123,15 @@ export type SendChatMessageResponse = {
   assistantMessage: ChatMessageResponse;
   usage: Usage;
 };
+
+export type WritingImproveRequest = {
+  inputText: string;
+  tone: WritingTone;
+  targetLength: TargetLength;
+};
+
+export type WritingGenericResponse = {
+  outputText: string;
+  warnings: string[];
+  usage: Usage;
+};
