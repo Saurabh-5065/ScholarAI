@@ -5,6 +5,8 @@ const API_BASE_URL =
 
 type JsonBody = object | string | number | boolean | null;
 
+let csrfToken: string | undefined;
+
 export class ApiError extends Error {
   status: number;
   error: string;
@@ -19,25 +21,20 @@ export class ApiError extends Error {
   }
 }
 
-function getXsrfToken(): string | undefined {
-  if (typeof document === "undefined") return undefined;
-  return document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("XSRF-TOKEN="))
-    ?.split("=")[1];
-}
-
 async function ensureXsrfToken(): Promise<string | undefined> {
-  const existing = getXsrfToken();
-  if (existing) return decodeURIComponent(existing);
+  if (csrfToken) return csrfToken;
 
-  await fetch(`${API_BASE_URL}/api/auth/me`, {
+  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
     method: "GET",
     credentials: "include",
   }).catch(() => undefined);
 
-  const token = getXsrfToken();
-  return token ? decodeURIComponent(token) : undefined;
+  if (response) {
+    const token = response.headers.get("X-XSRF-TOKEN");
+    if (token) csrfToken = token;
+  }
+
+  return csrfToken;
 }
 
 type ApiOptions = Omit<RequestInit, "body"> & {
@@ -75,6 +72,10 @@ export async function apiRequest<T>(
     // from its HTTP cache. The session must always be validated against the server.
     cache: "no-store",
   });
+
+  // Capture refreshed CSRF token if backend rotates it
+  const newToken = response.headers.get("X-XSRF-TOKEN");
+  if (newToken) csrfToken = newToken;
 
   if (response.status === 204) return undefined as T;
 
